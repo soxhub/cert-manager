@@ -33,7 +33,7 @@ import (
 	"github.com/jetstack/cert-manager/pkg/acme/accounts"
 	"github.com/jetstack/cert-manager/pkg/acme/client"
 	apiutil "github.com/jetstack/cert-manager/pkg/api/util"
-	"github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
+	v1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/jetstack/cert-manager/pkg/apis/meta/v1"
 	logf "github.com/jetstack/cert-manager/pkg/logs"
 	"github.com/jetstack/cert-manager/pkg/util/errors"
@@ -325,7 +325,7 @@ func (a *Acme) registerAccount(ctx context.Context, cl client.Interface, eabAcco
 
 	acc, err := cl.Register(ctx, acc, acmeapi.AcceptTOS)
 	// If the account already exists, fetch the Account object and return.
-	if err == acmeapi.ErrAccountAlreadyExists {
+	if err == acmeapi.ErrAccountAlreadyExists || a.issuer.GetSpec().ACME.DisableAccountKeyGeneration {
 		return cl.GetReg(ctx, "")
 	}
 	if err != nil {
